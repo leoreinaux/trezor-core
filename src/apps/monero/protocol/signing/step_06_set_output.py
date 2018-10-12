@@ -150,7 +150,7 @@ def _range_proof(state, amount, rsig_data):
 
     The range proof is incrementally hashed to the final_message.
     """
-    from apps.monero.xmr import ring_ct
+    from apps.monero.xmr import range_signatures
 
     mask = state.output_masks[state.current_output_index]
     provided_rsig = None
@@ -179,7 +179,9 @@ def _range_proof(state, amount, rsig_data):
     state.mem_trace("pre-rproof" if __debug__ else None, collect=True)
     if state.rsig_type == RsigType.Bulletproof and not state.rsig_offload:
         """Bulletproof calculation in trezor"""
-        rsig = ring_ct.prove_range_bp_batch(state.output_amounts, state.output_masks)
+        rsig = range_signatures.prove_range_bp_batch(
+            state.output_amounts, state.output_masks
+        )
         state.mem_trace("post-bp" if __debug__ else None, collect=True)
 
         # Incremental BP hashing
@@ -196,8 +198,8 @@ def _range_proof(state, amount, rsig_data):
 
     elif state.rsig_type == RsigType.Borromean and not state.rsig_offload:
         """Borromean calculation in trezor"""
-        C, mask, rsig = ring_ct.prove_range_chunked(amount, mask)
-        del (ring_ct)
+        C, mask, rsig = range_signatures.prove_range_borromean(amount, mask)
+        del range_signatures
 
         # Incremental hashing
         state.full_message_hasher.rsig_val(rsig, False, raw=True)
@@ -219,10 +221,10 @@ def _range_proof(state, amount, rsig_data):
         # array sizes compared to the serialized bulletproof format
         # thus direct serialization cannot be used.
         state.full_message_hasher.rsig_val(bp_obj, True, raw=False)
-        res = ring_ct.verify_bp(bp_obj, state.output_amounts, masks)
+        res = range_signatures.verify_bp(bp_obj, state.output_amounts, masks)
         state.assrt(res, "BP verification fail")
         state.mem_trace("BP verified" if __debug__ else None, collect=True)
-        del (bp_obj, ring_ct)
+        del (bp_obj, range_signatures)
 
     elif state.rsig_type == RsigType.Borromean and state.rsig_offload:
         """Borromean offloading not supported"""

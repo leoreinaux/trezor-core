@@ -129,12 +129,12 @@ async def sign_input(
     state.mem_trace(4)
 
     # RCT signature
-    from apps.monero.xmr import mlsag2
+    from apps.monero.xmr import mlsag
 
     if state.rct_type == RctType.Simple:
         # Simple RingCT
         mix_ring = [x.key for x in src_entr.outputs]
-        mg, msc = mlsag2.prove_rct_mg_simple(
+        mg, msc = mlsag.prove_rct_mg_simple(
             state.full_message,
             mix_ring,
             input_secret_key,
@@ -149,7 +149,7 @@ async def sign_input(
         txn_fee_key = crypto.scalarmult_h(state.fee)
         mix_ring = [[x.key] for x in src_entr.outputs]
 
-        mg, msc = mlsag2.prove_rct_mg(
+        mg, msc = mlsag.prove_rct_mg(
             state.full_message,
             mix_ring,
             [input_secret_key],

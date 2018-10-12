@@ -7,9 +7,7 @@
 # https://tools.ietf.org/html/draft-josefsson-eddsa-ed25519-00#section-4
 # https://github.com/monero-project/research-lab
 
-from trezor.crypto import hmac
-from trezor.crypto import monero as tcry
-from trezor.crypto import random
+from trezor.crypto import hmac, monero as tcry, random
 from trezor.crypto.hashlib import sha3_256
 
 NULL_KEY_ENC = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
