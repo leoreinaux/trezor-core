@@ -187,13 +187,13 @@ def ge25519_double_scalarmult_vartime2(r: Optional[Ge25519], p1: Ge25519, s1: Sc
     '''
 
 # extmod/modtrezorcrypto/modtrezorcrypto-monero.h
-def ge25519_double_scalarmult_base(r: Optional[Ge25519], s: Union[Sc25519, int]) -> Ge25519:
+def ge25519_scalarmult_base(r: Optional[Ge25519], s: Union[Sc25519, int]) -> Ge25519:
     '''
     s * G
     '''
 
 # extmod/modtrezorcrypto/modtrezorcrypto-monero.h
-def ge25519_double_scalarmult(r: Optional[Ge25519], p: Ge25519, s: Union[Sc25519, int]) -> Ge25519:
+def ge25519_scalarmult(r: Optional[Ge25519], p: Ge25519, s: Union[Sc25519, int]) -> Ge25519:
     '''
     s * p
     '''
