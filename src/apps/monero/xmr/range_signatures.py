@@ -64,7 +64,6 @@ def prove_range_borromean(amount, last_mask):
     C_h = crypto.xmr_H()
     C_tmp = crypto.identity()
     L = crypto.identity()
-    Zero = crypto.identity()
     kck = crypto.get_keccak()
 
     for ii in range(64):
@@ -78,8 +77,13 @@ def prove_range_borromean(amount, last_mask):
         crypto.scalarmult_base_into(L, tmp_alpha)
         crypto.scalarmult_base_into(C_tmp, tmp_ai)
 
-        # C_tmp += &Zero if BB(ii) == 0 else &C_h
-        crypto.point_add_into(C_tmp, C_tmp, Zero if ((amount >> ii) & 1) == 0 else C_h)
+        # if 0: C_tmp += Zero (nothing is added)
+        # if 1: C_tmp += 2^i*H
+        # 2^i*H is already stored in C_h
+        if (amount >> ii) & 1 == 1:
+            crypto.point_add_into(C_tmp, C_tmp, C_h)
+
+        # C_acc = C_tmp
         crypto.point_add_into(C_acc, C_acc, C_tmp)
 
         # Set Ci[ii] to sigs
@@ -135,7 +139,7 @@ def prove_range_borromean(amount, last_mask):
 
     crypto.encodeint_into(ee_bin, ee)
 
-    del (ai, alphai, buff, tmp_ai, tmp_alpha, si, c, ee, C_tmp, C_h, L, Zero)
+    del (ai, alphai, buff, tmp_ai, tmp_alpha, si, c, ee, C_tmp, C_h, L)
     gc.collect()
 
     return C_acc, a, [s0s, s1s, ee_bin, Cis]
